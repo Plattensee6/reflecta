@@ -1,4 +1,4 @@
-package hu.test.reflecta.auth.model;
+package hu.test.reflecta.appuser.model;
 
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;

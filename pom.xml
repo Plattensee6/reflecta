@@ -12,6 +12,7 @@
     <modules>
         <module>ref-app</module>
         <module>ref-auth</module>
+        <module>ref-datasource</module>
     </modules>
 
     <properties>
