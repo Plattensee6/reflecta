@@ -1,0 +1,14 @@
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\jwt\JwtAuthenticationFilter.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\service\AuthServiceImpl.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\service\AuthenticationException.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\config\SecurityConfig.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\jwt\JwtTokenProvider.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\model\JwtUserDetails.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\service\CustomUserDetailService.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\service\AuthService.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\model\Role.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\dto\LoginResponse.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\repository\AppUserRepository.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\model\AppUser.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\dto\LoginRequest.java
+C:\Dev\scaler\reflecta\Reflecta\ref-auth\src\main\java\hu\test\reflecta\auth\controller\AuthController.java

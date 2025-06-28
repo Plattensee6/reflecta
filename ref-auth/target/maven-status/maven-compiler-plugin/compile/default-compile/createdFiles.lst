@@ -1,0 +1,15 @@
+hu\test\reflecta\auth\jwt\JwtAuthenticationFilter.class
+hu\test\reflecta\auth\dto\LoginRequest.class
+hu\test\reflecta\auth\service\AuthService.class
+hu\test\reflecta\auth\jwt\JwtTokenProvider.class
+hu\test\reflecta\auth\repository\AppUserRepository.class
+hu\test\reflecta\auth\service\AuthenticationException.class
+hu\test\reflecta\auth\service\CustomUserDetailService.class
+hu\test\reflecta\auth\dto\LoginResponse.class
+hu\test\reflecta\auth\model\Role.class
+hu\test\reflecta\auth\service\AuthServiceImpl.class
+hu\test\reflecta\auth\model\JwtUserDetails.class
+hu\test\reflecta\auth\controller\AuthController.class
+hu\test\reflecta\auth\config\SecurityConfig.class
+hu\test\reflecta\auth\model\AppUser$AppUserBuilder.class
+hu\test\reflecta\auth\model\AppUser.class

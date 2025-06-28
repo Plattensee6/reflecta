@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/reflecta_dev
+    username: reflecta
+    password: reflecta
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+jwt:
+  secret: "RDBaUVI4RXc4QU9tSHMybE1oWmxHNmNHbzpILXhBJ0BocHZuaWkqUil1RmsofX1HKmghN01pIWo0c3h2RGBxSQ"
