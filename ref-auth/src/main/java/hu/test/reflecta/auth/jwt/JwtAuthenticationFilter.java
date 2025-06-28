@@ -1,6 +1,6 @@
 package hu.test.reflecta.auth.jwt;
 
-import hu.test.reflecta.appuser.model.Role;
+import hu.test.reflecta.datasource.appuser.model.Role;
 import hu.test.reflecta.auth.model.JwtUserDetails;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

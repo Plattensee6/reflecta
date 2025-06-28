@@ -1,7 +1,7 @@
 package hu.test.reflecta.auth.service;
 
-import hu.test.reflecta.auth.model.AppUser;
-import hu.test.reflecta.auth.repository.AppUserRepository;
+import hu.test.reflecta.datasource.appuser.model.AppUser;
+import hu.test.reflecta.datasource.appuser.repository.AppUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

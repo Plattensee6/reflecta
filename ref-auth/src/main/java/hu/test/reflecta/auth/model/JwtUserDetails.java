@@ -1,6 +1,6 @@
 package hu.test.reflecta.auth.model;
 
-import hu.test.reflecta.appuser.model.Role;
+import hu.test.reflecta.datasource.appuser.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;

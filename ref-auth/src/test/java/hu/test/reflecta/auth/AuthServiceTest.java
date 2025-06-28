@@ -1,12 +1,12 @@
 package hu.test.reflecta.auth;
 
+import hu.test.reflecta.datasource.appuser.model.AppUser;
+import hu.test.reflecta.datasource.appuser.model.Role;
 import hu.test.reflecta.auth.dto.LoginRequest;
 import hu.test.reflecta.auth.dto.LoginResponse;
 import hu.test.reflecta.auth.jwt.JwtTokenProvider;
-import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.model.JwtUserDetails;
-import hu.test.reflecta.auth.model.Role;
-import hu.test.reflecta.auth.repository.AppUserRepository;
+import hu.test.reflecta.datasource.appuser.repository.AppUserRepository;
 import hu.test.reflecta.auth.service.AuthServiceImpl;
 import hu.test.reflecta.auth.service.AuthenticationException;
 import io.jsonwebtoken.SignatureAlgorithm;
