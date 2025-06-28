@@ -1,0 +1,105 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001
+      author: yourname
+      changes:
+        - createTable:
+            tableName: app_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password_hash
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: app_user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+
+        - createTable:
+            tableName: employee
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: VARCHAR(255)
+              - column:
+                  name: created_by
+                  type: BIGINT
+
+        - createTable:
+            tableName: meeting
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: start_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: end_time
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_by_employee_id
+                  type: BIGINT
+
+        - addForeignKeyConstraint:
+            baseTableName: meeting
+            baseColumnNames: created_by_employee_id
+            referencedTableName: employee
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: employee
+            baseColumnNames: created_by
+            referencedTableName: app_user
+            referencedColumnNames: id
+
+        - addForeignKeyConstraint:
+            baseTableName: app_user_roles
+            baseColumnNames: user_id
+            referencedTableName: app_user
+            referencedColumnNames: id
