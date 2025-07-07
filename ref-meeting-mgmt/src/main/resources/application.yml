@@ -1,0 +1,9 @@
+errors:
+  meeting:
+    meetingNotFound: Meeting not found.
+    userNotFound: User not found.
+    finalizedAlreadyExists: Another finalized meeting already exists in the selected time range.
+    updateFinMeeting: Cannot update a finalized meeting
+    deleteFinMeeting: Cannot delete a finalized meeting
+    invalidTimeRange: Meeting start date must be before end date.
+    unauthorized: You are not allowed to modify this meeting.

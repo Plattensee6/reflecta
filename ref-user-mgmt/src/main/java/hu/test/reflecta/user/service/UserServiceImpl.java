@@ -1,0 +1,79 @@
+package hu.test.reflecta.user.service;
+
+import hu.test.reflecta.auth.check.RequireParticipation;
+import hu.test.reflecta.user.data.dto.UserRequest;
+import hu.test.reflecta.user.data.dto.UserResponse;
+import hu.test.reflecta.user.data.mapper.UserMapper;
+import hu.test.reflecta.user.data.model.User;
+import hu.test.reflecta.user.data.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+/**
+ * Default implementation of {@link UserService}.
+ */
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
+    private final UserRepository userRepository;
+    private final UserMapper mapper;
+
+    @Transactional(readOnly = true)
+    @RequireParticipation(allowAdmin = true)
+    @Override
+    public UserResponse createUser(final UserRequest request) {
+        User user = mapper.toEntity(request);
+        User saved = userRepository.save(user);
+        return mapper.toResponse(saved);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<UserResponse> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    @RequireParticipation(allowAdmin = true)
+    @Override
+    public UserResponse getById(final Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+        return mapper.toResponse(user);
+    }
+
+    @Transactional
+    @RequireParticipation
+    @Override
+    public UserResponse updateUser(final Long id, UserRequest request) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+        user.update(mapper.toEntity(request));
+        User updated = userRepository.save(user);
+        return mapper.toResponse(updated);
+    }
+
+    @Transactional
+    @RequireParticipation(allowAdmin = true)
+    @Override
+    public void deleteUser(Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found with ID: " + id);
+        }
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+}

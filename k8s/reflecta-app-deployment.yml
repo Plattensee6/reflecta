@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reflecta-app
+  namespace: reflecta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reflecta-app
+  template:
+    metadata:
+      labels:
+        app: reflecta-app
+    spec:
+      containers:
+        - name: reflecta
+          image: yourdockerhub/reflecta:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: k8s
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://reflecta-postgres:5432/reflecta
+            - name: SPRING_DATASOURCE_USERNAME
+              value: reflecta
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reflecta-secrets
+                  key: db-password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: reflecta-secrets
+                  key: jwt-secret

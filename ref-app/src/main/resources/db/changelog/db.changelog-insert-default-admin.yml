@@ -1,0 +1,82 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-admin-user
+      author: liquibase
+      comment: Insert default admin user
+      changes:
+        changes:
+          - insert:
+              tableName: t_user
+              columns:
+                - column:
+                    name: id
+                    valueNumeric: 1
+                - column:
+                    name: email
+                    value: "admin@example.com"
+                - column:
+                    name: name
+                    value: "Admin User"
+                - column:
+                    name: date_of_birth
+                    valueDate: "1980-01-01T00:00:00"
+                - column:
+                    name: position
+                    valueNumeric: 0
+  - changeSet:
+      id: insert-default-appuser
+      author: plattensee
+      changes:
+          - insert:
+              tableName: t_app_user
+              columns:
+                - column:
+                    name: id
+                    valueNumeric: 1
+                - column:
+                    name: username
+                    value: "admin"
+                - column:
+                    name: password_hash
+                    value: "$2a$10$ha7paX0oUgp8/j0ES6X8NeL0a0E93K3wVQi8XXb4q746/26QTNV4u"
+                - column:
+                    name: user_id
+                    valueNumeric: 1
+                - column:
+                    name: enabled
+                    valueBoolean: true
+                - column:
+                    name: created_at
+                    valueDate: "2024-01-01T00:00:00"
+
+  - changeSet:
+      id: insert-app-user-roles
+      author: plattensee
+      changes:
+        - insert:
+            tableName: app_user_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role
+                  value: ROLE_ADMIN
+        - insert:
+            tableName: app_user_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role
+                  value: ROLE_WRITE
+        - insert:
+            tableName: app_user_roles
+            columns:
+              - column:
+                  name: user_id
+                  valueNumeric: 1
+              - column:
+                  name: role
+                  value: ROLE_READ

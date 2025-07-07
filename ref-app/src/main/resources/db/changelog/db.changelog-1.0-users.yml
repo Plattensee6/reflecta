@@ -1,0 +1,143 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-create-user-table
+      author: plattensee
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: t_user
+      changes:
+        - createTable:
+            tableName: t_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: date_of_birth
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: position
+                  type: SMALLINT
+                  constraints:
+                    nullable: false
+
+        - createIndex:
+            tableName: t_user
+            indexName: idx_user_email
+            unique: true
+            columns:
+              - column:
+                  name: email
+        - createIndex:
+            tableName: t_user
+            indexName: idx_user_id
+            unique: false
+            columns:
+              - column:
+                  name: id
+  - changeSet:
+      id: 1-create-app-user-table
+      author: plattensee
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            - tableExists:
+                tableName: t_app_user
+      changes:
+        - createTable:
+            tableName: t_app_user
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password_hash
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: t_app_user
+            baseColumnNames: user_id
+            referencedTableName: t_user
+            referencedColumnNames: id
+            constraintName: fk_appuser_user
+        - createIndex:
+            tableName: t_app_user
+            indexName: idx_app_user_name
+            unique: true
+            columns:
+              - column:
+                  name: username
+
+  - changeSet:
+      id: 1-create-appuser-roles-table
+      author: plattensee
+      preConditions:
+        - onFail: MARK_RAN
+        - not:
+            tableExists:
+              tableName: app_user_roles
+      changes:
+        - createTable:
+            tableName: app_user_roles
+            columns:
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: app_user_roles
+            baseColumnNames: user_id
+            referencedTableName: t_app_user
+            referencedColumnNames: id
+            constraintName: fk_app_user_roles_user
+
+
