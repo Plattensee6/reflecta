@@ -12,7 +12,11 @@ Manages quarterly evaluation meetings, allowing users to record, track, and revi
   - Link meetings to users
   - Retrieve and list past evaluations
 
-### Prerequisites
+### Default user - Normally, I would store credentials and secrets in Spring Vault.
+Username: admin
+Pwd: admin123
+
+#### Prerequisites
 - Java 17+
 - Docker & Docker Compose
 - Maven
