@@ -1,12 +1,11 @@
 package hu.test.reflecta.auth.service;
 
 import hu.test.reflecta.auth.check.Participant;
-import hu.test.reflecta.auth.model.JwtUserDetails;
-import hu.test.reflecta.auth.model.Role;
 import hu.test.reflecta.auth.dto.LoginRequest;
 import hu.test.reflecta.auth.dto.LoginResponse;
+import hu.test.reflecta.auth.model.JwtUserDetails;
+import hu.test.reflecta.auth.model.Role;
 
-import java.util.Optional;
 import java.util.Set;
 
 public interface AuthService {
