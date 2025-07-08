@@ -1,5 +1,6 @@
 package hu.test.reflecta;
 
+import hu.test.reflecta.auth.exception.AuthErrorMessages;
 import hu.test.reflecta.meeting.config.MeetingErrorMessages;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories
 @EnableConfigurationProperties({
         MeetingErrorMessages.class,
+        AuthErrorMessages.class
 })
 @ConfigurationProperties(prefix = "security.cors")
 @EntityScan

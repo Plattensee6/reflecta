@@ -6,6 +6,7 @@ import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
 import hu.test.reflecta.user.data.model.User;
 import hu.test.reflecta.user.data.repository.UserRepository;
+import hu.test.reflecta.user.exception.UserErrorMessage;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper mapper;
+    private final UserErrorMessage userErrorMessage;
 
     @Transactional(readOnly = true)
     @RequireParticipation(allowAdmin = true)
@@ -47,16 +49,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponse getById(final Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(userErrorMessage.getUserNotFound(id)));
         return mapper.toResponse(user);
     }
 
     @Transactional
     @RequireParticipation
     @Override
-    public UserResponse updateUser(final Long id, UserRequest request) {
+    public UserResponse updateUser(final Long id, final UserRequest request) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + id));
+                .orElseThrow(() -> new EntityNotFoundException(userErrorMessage.getUserNotFound(id)));
         user.update(mapper.toEntity(request));
         User updated = userRepository.save(user);
         return mapper.toResponse(updated);
@@ -65,15 +67,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @RequireParticipation(allowAdmin = true)
     @Override
-    public void deleteUser(Long id) {
+    public void deleteUser(final Long id) {
         if (!userRepository.existsById(id)) {
-            throw new EntityNotFoundException("User not found with ID: " + id);
+            throw new EntityNotFoundException(userErrorMessage.getUserNotFound(id));
         }
         userRepository.deleteById(id);
     }
 
     @Override
-    public Boolean existsByEmail(String email) {
+    public Boolean existsByEmail(final String email) {
         return userRepository.existsByEmail(email);
     }
 }

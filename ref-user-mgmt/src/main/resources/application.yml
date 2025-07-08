@@ -1,0 +1,3 @@
+error:
+  user:
+    userNotFound: User not found with ID

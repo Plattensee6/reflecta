@@ -15,37 +15,37 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class AuthControllerAdvice {
 
     @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<AuthErrorResponse> handleAuthenticationFailure(AuthenticationException ex) {
+    public ResponseEntity<AuthErrorResponse> handleAuthenticationFailure(final AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new AuthErrorResponse(HttpStatus.BAD_REQUEST, "Authentication failed"));
     }
 
     @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<AuthErrorResponse> handleExpiredJwt(ExpiredJwtException ex) {
+    public ResponseEntity<AuthErrorResponse> handleExpiredJwt(final ExpiredJwtException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new AuthErrorResponse(HttpStatus.BAD_REQUEST,"JWT token expired"));
     }
 
     @ExceptionHandler(JwtException.class)
-    public ResponseEntity<AuthErrorResponse> handleJwtException(JwtException ex) {
+    public ResponseEntity<AuthErrorResponse> handleJwtException(final JwtException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new AuthErrorResponse(HttpStatus.BAD_REQUEST, "Invalid JWT token"));
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<AuthErrorResponse> handleAccessDenied(AccessDeniedException ex) {
+    public ResponseEntity<AuthErrorResponse> handleAccessDenied(final AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new AuthErrorResponse(HttpStatus.UNAUTHORIZED, "Do not have permission to perform this operation"));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<AuthErrorResponse> handleOther(Exception ex) {
+    public ResponseEntity<AuthErrorResponse> handleOther(final Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new AuthErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected error"));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Object> handleBadCredentials(BadCredentialsException ex) {
+    public ResponseEntity<Object> handleBadCredentials(final BadCredentialsException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new AuthErrorResponse(HttpStatus.UNAUTHORIZED, "Invalid username or password"));
     }

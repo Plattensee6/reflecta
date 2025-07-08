@@ -37,3 +37,8 @@ security:
     allowedHeaders:
       - "*"
     allowedCredentials: false
+
+errors.app:
+  usernameTaken: Username already exists
+  emailTaken: Email already used
+  pwdNoMatch: The provided passwords do not match

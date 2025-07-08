@@ -1,17 +1,3 @@
-spring:
-  datasource:
-    url: jdbc:postgresql://postgres:5432/reflecta
-    username: reflecta
-    password: reflecta
-  jpa:
-    hibernate:
-      ddl-auto: none
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-
-
 error:
   auth:
     userNotAuthenticated: User not authenticated.

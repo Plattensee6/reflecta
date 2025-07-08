@@ -13,13 +13,13 @@ public class MeetingSpecification {
      * @param userId currentUserID
      * @return Specification<Meeting>
      */
-    public static Specification<Meeting> participant(Long userId) {
+    public static Specification<Meeting> participant(final Long userId) {
         if (userId == null) {
             return null;
         }
         return (root, query, builder) -> {
-            var manager = root.join("manager");
-            var employee = root.join("employee");
+            final var manager = root.join("manager");
+            final var employee = root.join("employee");
             return builder.or(
                     builder.equal(manager.get("id"), userId),
                     builder.equal(employee.get("id"), userId)
@@ -32,7 +32,7 @@ public class MeetingSpecification {
      * @param title
      * @return Specification<Meeting>
      */
-    public static Specification<Meeting> titleContains(String title) {
+    public static Specification<Meeting> titleContains(final String title) {
         if (title == null || title.isBlank()) {
             return null;
         }
@@ -49,7 +49,7 @@ public class MeetingSpecification {
      * @param dateTime min start time
      * @return Specification<Meeting>
      */
-    public static Specification<Meeting> startsAfter(LocalDateTime dateTime) {
+    public static Specification<Meeting> startsAfter(final LocalDateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
@@ -66,7 +66,7 @@ public class MeetingSpecification {
      * @param dateTime
      * @return Specification<Meeting>
      */
-    public static Specification<Meeting> endsBefore(LocalDateTime dateTime) {
+    public static Specification<Meeting> endsBefore(final LocalDateTime dateTime) {
         if (dateTime == null) {
             return null;
         }
@@ -83,7 +83,7 @@ public class MeetingSpecification {
      * @param finalized true/false véglegesített-e
      * @return Specification<Meeting>
      */
-    public static Specification<Meeting> isFinalized(Boolean finalized) {
+    public static Specification<Meeting> isFinalized(final Boolean finalized) {
         if (finalized == null) {
             return null;
         }

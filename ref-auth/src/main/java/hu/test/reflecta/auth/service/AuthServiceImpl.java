@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -26,55 +27,60 @@ public class AuthServiceImpl implements AuthService {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JwtService jwtService;
 
+    @Transactional(readOnly = true)
     @Override
     public String getCurrentUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof JwtUserDetails user) {
             return user.getUsername();
         }
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public JwtUserDetails getCurrentUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof JwtUserDetails user) {
             return user;
         }
         return null;
     }
 
-
+    @Transactional(readOnly = true)
     @Override
     public Long getCurrentUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof JwtUserDetails user) {
             return user.getId();
         }
         return null;
     }
 
+    @Transactional(readOnly = true)
     @Override
     public Set<Role> getCurrentUserRoles() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof JwtUserDetails user) {
             return user.getRoles();
         }
         return Set.of();
     }
 
+    @Transactional
     @Override
-    public LoginResponse login(LoginRequest request) throws Exception {
-        AuthenticationManager authenticationManager = authenticationConfiguration.getAuthenticationManager();
+    public LoginResponse login(final LoginRequest request) throws Exception {
+        final AuthenticationManager authenticationManager = authenticationConfiguration
+                .getAuthenticationManager();
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
-        AppUser appUser = userRepository.findAppUserByusername(request.getUsername())
+        final AppUser appUser = userRepository.findAppUserByusername(request.getUsername())
                 .orElseThrow(EntityNotFoundException::new);
-        String token = jwtService.generateToken(appUser);
+        final String token = jwtService.generateToken(appUser);
         return LoginResponse.builder()
                 .token(token)
                 .businessUserId(appUser.getUserId())
@@ -82,17 +88,21 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public Boolean currentUserHasRole(Role role) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public Boolean currentUserHasRole(final Role role) {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null && auth.getPrincipal() instanceof JwtUserDetails user) {
             return user.hasRole(role);
         }
         return false;
     }
 
+    @Transactional(readOnly = true)
     @Override
-    public boolean isEligible(Participant meeting, Long currentUserId, boolean allowAdmin) {
+    public boolean isEligible(final Participant meeting,
+                              final Long currentUserId,
+                              final boolean allowAdmin) {
         if (allowAdmin && currentUserHasRole(Role.ROLE_ADMIN)) {
             return true;
         }

@@ -27,6 +27,8 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <spring-boot-mvn.version>3.2.5</spring-boot-mvn.version>
         <postgres-test-container.version>1.19.3</postgres-test-container.version>
+        <checkstyle.verision>10.12.4</checkstyle.verision>
+        <checkstyle-plugin.version>3.3.0</checkstyle-plugin.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -65,5 +67,22 @@
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.12.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <configLocation>google_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>
 

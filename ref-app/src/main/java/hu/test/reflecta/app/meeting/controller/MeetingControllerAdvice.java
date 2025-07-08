@@ -18,31 +18,31 @@ import java.util.stream.Collectors;
 public class MeetingControllerAdvice {
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(EntityNotFoundException ex) {
+    public ResponseEntity<ErrorResponse> handleNotFound(final EntityNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse("MEETING_NOT_FOUND", ex.getLocalizedMessage()));
     }
 
     @ExceptionHandler(MeetingAlreadyFinalizedException.class)
-    public ResponseEntity<ErrorResponse> handleAlreadyFinalized(MeetingAlreadyFinalizedException ex) {
+    public ResponseEntity<ErrorResponse> handleAlreadyFinalized(final MeetingAlreadyFinalizedException ex) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse("MEETING_FINALIZED", ex.getLocalizedMessage()));
     }
 
     @ExceptionHandler(MeetingConflictException.class)
-    public ResponseEntity<ErrorResponse> handleConflict(MeetingConflictException ex) {
+    public ResponseEntity<ErrorResponse> handleConflict(final MeetingConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new ErrorResponse("MEETING_CONFLICT", ex.getLocalizedMessage()));
     }
 
     @ExceptionHandler(ParticipantAccessException.class)
-    public ResponseEntity<ErrorResponse> handleAccess(ParticipantAccessException ex) {
+    public ResponseEntity<ErrorResponse> handleAccess(final ParticipantAccessException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ErrorResponse("ACCESS_DENIED", ex.getLocalizedMessage()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidation(final MethodArgumentNotValidException ex) {
         String details = ex.getBindingResult().getFieldErrors().stream()
                 .map(err -> err.getField() + ": " + err.getDefaultMessage())
                 .collect(Collectors.joining(", "));
@@ -51,7 +51,7 @@ public class MeetingControllerAdvice {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponse> handleConstraint(ConstraintViolationException ex) {
+    public ResponseEntity<ErrorResponse> handleConstraint(final ConstraintViolationException ex) {
         String details = ex.getConstraintViolations().stream()
                 .map(v -> v.getPropertyPath() + ": " + v.getMessage())
                 .collect(Collectors.joining(", "));
@@ -60,7 +60,7 @@ public class MeetingControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleOther(Exception ex) {
+    public ResponseEntity<ErrorResponse> handleOther(final Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(new ErrorResponse("INTERNAL_ERROR", "Unexpected error: " + ex.getLocalizedMessage()));
     }
