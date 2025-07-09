@@ -1,6 +1,8 @@
 package hu.test.reflecta.user.service;
 
 import hu.test.reflecta.auth.check.RequireParticipation;
+import hu.test.reflecta.auth.model.Role;
+import hu.test.reflecta.auth.service.AuthService;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
@@ -30,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @RequireParticipation(allowAdmin = true)
     @Override
     public UserResponse createUser(final UserRequest request) {
-        User user = mapper.toEntity(request);
+        final User user = mapper.toEntity(request);
         User saved = userRepository.save(user);
         return mapper.toResponse(saved);
     }

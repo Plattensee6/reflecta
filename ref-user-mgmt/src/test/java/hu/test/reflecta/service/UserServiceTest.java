@@ -5,6 +5,7 @@ import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
 import hu.test.reflecta.user.data.model.User;
 import hu.test.reflecta.user.data.repository.UserRepository;
+import hu.test.reflecta.user.exception.UserErrorMessage;
 import hu.test.reflecta.user.service.UserService;
 import hu.test.reflecta.user.service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,7 +26,7 @@ public class UserServiceTest {
     void setUp() {
         userRepository = mock(UserRepository.class);
         userMapper = mock(UserMapper.class);
-        userService = new UserServiceImpl(userRepository, userMapper);
+        userService = new UserServiceImpl(userRepository, userMapper, new UserErrorMessage());
     }
 
     @Test
