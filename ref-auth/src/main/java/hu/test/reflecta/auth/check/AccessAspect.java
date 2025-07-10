@@ -1,6 +1,7 @@
 package hu.test.reflecta.auth.check;
 
 import hu.test.reflecta.auth.exception.AuthErrorMessages;
+import hu.test.reflecta.auth.model.Accessible;
 import hu.test.reflecta.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +12,11 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Component;
-
 import java.lang.reflect.Method;
 
 /**
  * Aspect that enforces participation-based access control for methods annotated with
- * {@link hu.test.reflecta.auth.check.RequireParticipation}.
+ * {@link RequireAccess}.
  * <p>
  * This aspect checks whether the current authenticated user is a participant (or optionally an admin)
  * of the target resource before allowing method execution.
@@ -26,12 +26,12 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 @RequiredArgsConstructor
-public class ParticipantAspect {
+public class AccessAspect {
     private final AuthService authService;
     private final AuthErrorMessages authErrorMessages;
 
     /**
-     * Around advice that checks if the current user is a participant or has access
+     * Around advice that checks if the current user has access
      * to the annotated method's target.
      *
      * @param joinPoint the join point representing the method execution
@@ -46,11 +46,15 @@ public class ParticipantAspect {
         }
         final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         final Method method = signature.getMethod();
-        final RequireParticipation annotation = method.getAnnotation(RequireParticipation.class);
-        boolean allowAdmin = annotation.allowAdmin();
-        for (Object arg : joinPoint.getArgs()) {
-            if (arg instanceof Participant meeting) {
-                if (!authService.isEligible(meeting, currentUserId, allowAdmin)) {
+        final RequireAccess annotation = method.getAnnotation(RequireAccess.class);
+        final boolean allowAdmin = annotation.allowAdmin();
+        if (allowAdmin) {
+            return joinPoint.proceed();
+        }
+        for (Object acc : joinPoint.getArgs()) {
+            if (acc instanceof Accessible accessible) {
+                accessible.hasAccess(currentUserId);
+                if (!((Accessible) acc).hasAccess(currentUserId)) {
                     throw new AccessDeniedException(authErrorMessages.getAccessDenied());
                 }
                 break;

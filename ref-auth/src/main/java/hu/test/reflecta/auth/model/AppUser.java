@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +33,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AppUser implements UserDetails {
+public class AppUser implements UserDetails, Accessible {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -99,5 +98,10 @@ public class AppUser implements UserDetails {
     @Override
     public String getUsername() {
         return username;
+    }
+
+    @Override
+    public Boolean hasAccess(Long currUserId) {
+        return this.userId.equals(currUserId);
     }
 }
