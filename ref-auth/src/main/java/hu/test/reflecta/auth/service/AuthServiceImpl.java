@@ -1,6 +1,5 @@
 package hu.test.reflecta.auth.service;
 
-import hu.test.reflecta.auth.check.Participant;
 import hu.test.reflecta.auth.dto.LoginRequest;
 import hu.test.reflecta.auth.dto.LoginResponse;
 import hu.test.reflecta.auth.model.AppUser;
@@ -96,16 +95,5 @@ public class AuthServiceImpl implements AuthService {
             return user.hasRole(role);
         }
         return false;
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public boolean isEligible(final Participant meeting,
-                              final Long currentUserId,
-                              final boolean allowAdmin) {
-        if (allowAdmin && currentUserHasRole(Role.ROLE_ADMIN)) {
-            return true;
-        }
-        return meeting.isParticipant(currentUserId);
     }
 }

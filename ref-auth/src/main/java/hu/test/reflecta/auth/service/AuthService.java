@@ -1,6 +1,5 @@
 package hu.test.reflecta.auth.service;
 
-import hu.test.reflecta.auth.check.Participant;
 import hu.test.reflecta.auth.dto.LoginRequest;
 import hu.test.reflecta.auth.dto.LoginResponse;
 import hu.test.reflecta.auth.model.JwtUserDetails;
@@ -15,6 +14,4 @@ public interface AuthService {
     LoginResponse login(LoginRequest request) throws Exception;
     JwtUserDetails getCurrentUser();
     Boolean currentUserHasRole(Role role);
-
-    boolean isEligible(Participant meeting, Long currentUserId, boolean allowAdmin);
 }

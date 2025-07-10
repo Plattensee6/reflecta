@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Entity
 @Table(name = "t_app_user")
@@ -103,5 +104,13 @@ public class AppUser implements UserDetails, Accessible {
     @Override
     public Boolean hasAccess(Long currUserId) {
         return this.userId.equals(currUserId);
+    }
+
+    public void addRole(final Role role) {
+        this.roles.add(role);
+    }
+
+    public void addRoles(final Set<Role> revokedRoles) {
+        this.roles.removeAll(revokedRoles);
     }
 }

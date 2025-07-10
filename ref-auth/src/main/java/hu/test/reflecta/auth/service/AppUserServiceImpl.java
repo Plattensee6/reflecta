@@ -1,7 +1,9 @@
 package hu.test.reflecta.auth.service;
 
+import hu.test.reflecta.auth.check.RequireAccess;
 import hu.test.reflecta.auth.dto.AppUserRequest;
 import hu.test.reflecta.auth.dto.AppUserResponse;
+import hu.test.reflecta.auth.dto.AppUserRolesRequest;
 import hu.test.reflecta.auth.mapper.AppUserMapper;
 import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.model.Role;
@@ -11,10 +13,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
-public class AppUserServiceImpl implements AppUserService{
+public class AppUserServiceImpl implements AppUserService {
     private final AppUserRepository appUserRepository;
     private final AppUserMapper appUserMapper;
     private final AuthService authService;
@@ -22,7 +25,7 @@ public class AppUserServiceImpl implements AppUserService{
     @Transactional(readOnly = true)
     @Override
     public AppUserResponse create(final AppUserRequest request) {
-        AppUser appUser = appUserMapper.toEntity(
+        final AppUser appUser = appUserMapper.toEntity(
                 request,
                 authService.currentUserHasRole(Role.ROLE_ADMIN)
         );
@@ -30,5 +33,23 @@ public class AppUserServiceImpl implements AppUserService{
         appUser.setCreatedAt(LocalDateTime.now());
         appUserRepository.save(appUser);
         return appUserMapper.toDto(appUser);
+    }
+
+    @RequireAccess(allowAdmin = true)
+    @Override
+    public AppUserResponse addRoles(final AppUserRolesRequest request) {
+        final Long appUserId = request.getAppUserId();
+        final AppUser existing = appUserRepository.getReferenceById(appUserId);
+        existing.addRoles(request.getNewRoles());
+        return appUserMapper.toDto(existing);
+    }
+
+    @RequireAccess(allowAdmin = true)
+    @Override
+    public AppUserResponse revokeRoles(final AppUserRolesRequest request) {
+        final Long appUserId = request.getAppUserId();
+        final AppUser existing = appUserRepository.getReferenceById(appUserId);
+        existing.addRoles(request.getNewRoles());
+        return appUserMapper.toDto(existing);
     }
 }

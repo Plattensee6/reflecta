@@ -57,4 +57,5 @@ public interface UserService {
      * @return {@code true} if a user exists with the given email; otherwise, {@code false}
      */
     Boolean existsByEmail(String email);
+
 }

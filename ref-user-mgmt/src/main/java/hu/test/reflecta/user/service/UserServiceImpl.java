@@ -1,8 +1,6 @@
 package hu.test.reflecta.user.service;
 
-import hu.test.reflecta.auth.check.RequireParticipation;
-import hu.test.reflecta.auth.model.Role;
-import hu.test.reflecta.auth.service.AuthService;
+import hu.test.reflecta.auth.check.RequireAccess;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private final UserErrorMessage userErrorMessage;
 
     @Transactional(readOnly = true)
-    @RequireParticipation(allowAdmin = true)
+    @RequireAccess(allowAdmin = true)
     @Override
     public UserResponse createUser(final UserRequest request) {
         final User user = mapper.toEntity(request);
@@ -47,7 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional(readOnly = true)
-    @RequireParticipation(allowAdmin = true)
+    @RequireAccess(allowAdmin = true)
     @Override
     public UserResponse getById(final Long id) {
         User user = userRepository.findById(id)
@@ -56,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @RequireParticipation
+    @RequireAccess
     @Override
     public UserResponse updateUser(final Long id, final UserRequest request) {
         User user = userRepository.findById(id)
@@ -67,7 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    @RequireParticipation(allowAdmin = true)
+    @RequireAccess(allowAdmin = true)
     @Override
     public void deleteUser(final Long id) {
         if (!userRepository.existsById(id)) {

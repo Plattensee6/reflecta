@@ -1,5 +1,7 @@
 package hu.test.reflecta.app.user.controller;
 
+import hu.test.reflecta.auth.dto.AppUserRolesRequest;
+import hu.test.reflecta.auth.service.AppUserService;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.service.UserService;
@@ -30,6 +32,7 @@ import java.util.List;
 @Tag(name = "Users", description = "CRUD operations for users")
 public class UserController {
     private final UserService userService;
+    private final AppUserService appUserService;
 
     @PreAuthorize("hasAuthority('READ')")
     @GetMapping("/{id}")
@@ -79,6 +82,22 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(
             @Parameter(description = "ID of the user") @PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('READ') and hasAuthority('ADMIN')")
+    @PutMapping("/roles/add")
+    public ResponseEntity<Void> addRoles(
+            @RequestBody @Valid AppUserRolesRequest request) {
+        appUserService.addRoles(request);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasAuthority('READ') and hasAuthority('ADMIN')")
+    @PutMapping("/roles/revoke")
+    public ResponseEntity<Void> revokeRoles(
+            @RequestBody @Valid AppUserRolesRequest request) {
+        appUserService.revokeRoles(request);
         return ResponseEntity.noContent().build();
     }
 }
