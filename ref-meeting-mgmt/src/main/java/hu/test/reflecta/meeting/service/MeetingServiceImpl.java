@@ -1,6 +1,6 @@
 package hu.test.reflecta.meeting.service;
 
-import hu.test.reflecta.auth.check.RequireParticipation;
+import hu.test.reflecta.auth.check.RequireAccess;
 import hu.test.reflecta.meeting.config.MeetingErrorMessages;
 import hu.test.reflecta.meeting.data.dto.MeetingRequest;
 import hu.test.reflecta.meeting.data.dto.MeetingResponse;
@@ -39,7 +39,7 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws EntityNotFoundException if the meeting does not exist
      */
     @Override
-    @RequireParticipation(allowAdmin = true)
+    @RequireAccess(allowAdmin = true)
     @Transactional(readOnly = true)
     public MeetingResponse getById(final Long id) {
         final var entity = meetingRepository.findById(id)
@@ -97,7 +97,7 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws IllegalStateException   if the meeting is already finalized
      */
     @Override
-    @RequireParticipation(allowAdmin = true)
+    @RequireAccess(allowAdmin = true)
     public void delete(final Long id) {
         final var entity = meetingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(errorMessages.getMeetingNotFound()));
@@ -115,7 +115,7 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws IllegalStateException   if the meeting is already finalized or overlaps with another finalized meeting
      */
     @Override
-    @RequireParticipation
+    @RequireAccess
     public void finalizeMeeting(final Long id) {
         final var meeting = meetingRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(errorMessages.getMeetingNotFound()));
@@ -156,7 +156,7 @@ public class MeetingServiceImpl implements MeetingService {
      */
     @Override
     @Transactional(readOnly = true)
-    @RequireParticipation(allowAdmin = true)
+    @RequireAccess(allowAdmin = true)
     public Page<MeetingResponse> searchMeetings(final Long currentUserId,
                                                 final String title,
                                                 final LocalDateTime start,

@@ -38,28 +38,32 @@ public class AccessAspect {
      * @return the result of the method execution if access is allowed
      * @throws Throwable if the target method throws an exception or access is denied
      */
-    @Around("@annotation(hu.test.reflecta.auth.check.RequireParticipation)")
+    @Around("@annotation(hu.test.reflecta.auth.check.RequireAccess)")
     public Object checkParticipation(final ProceedingJoinPoint joinPoint) throws Throwable {
-        final Long currentUserId = authService.getCurrentUserId();
-        if (currentUserId == null) {
-            throw new InsufficientAuthenticationException(authErrorMessages.getUserNotAuthenticated());
-        }
-        final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
-        final Method method = signature.getMethod();
-        final RequireAccess annotation = method.getAnnotation(RequireAccess.class);
-        final boolean allowAdmin = annotation.allowAdmin();
+        final boolean allowAdmin = isAllowAdmin(joinPoint);
         if (allowAdmin) {
             return joinPoint.proceed();
         }
+        final String currentUserName = authService.getCurrentUsername();
+        if (currentUserName == null) {
+            throw new InsufficientAuthenticationException(authErrorMessages.getUserNotAuthenticated());
+        }
         for (Object acc : joinPoint.getArgs()) {
             if (acc instanceof Accessible accessible) {
-                accessible.hasAccess(currentUserId);
-                if (!((Accessible) acc).hasAccess(currentUserId)) {
+                accessible.hasAccess(currentUserName);
+                if (!((Accessible) acc).hasAccess(currentUserName)) {
                     throw new AccessDeniedException(authErrorMessages.getAccessDenied());
                 }
                 break;
             }
         }
         return joinPoint.proceed();
+    }
+
+    private boolean isAllowAdmin(final ProceedingJoinPoint joinPoint) {
+        final MethodSignature signature = (MethodSignature) joinPoint.getSignature();
+        final Method method = signature.getMethod();
+        final RequireAccess annotation = method.getAnnotation(RequireAccess.class);
+        return annotation.allowAdmin();
     }
 }

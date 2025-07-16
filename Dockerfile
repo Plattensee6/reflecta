@@ -4,7 +4,6 @@ WORKDIR /app
 COPY . .
 RUN mvn clean package -pl ref-app -am -DskipTests
 
-
 # Stage 2: runtime
 FROM eclipse-temurin:17-jre
 WORKDIR /app

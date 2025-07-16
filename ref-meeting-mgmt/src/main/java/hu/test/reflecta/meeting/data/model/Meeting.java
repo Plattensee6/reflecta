@@ -1,6 +1,6 @@
 package hu.test.reflecta.meeting.data.model;
 
-import hu.test.reflecta.auth.check.Participant;
+import hu.test.reflecta.auth.model.Accessible;
 import hu.test.reflecta.meeting.data.dto.MeetingRequest;
 import hu.test.reflecta.user.data.model.User;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Meeting implements Participant {
+public class Meeting implements Accessible {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,8 +55,8 @@ public class Meeting implements Participant {
     }
 
     @Override
-    public boolean isParticipant(final Long uid) {
-        return (manager.getAppUser().getId().equals(uid)
-                || employee.getAppUser().getId().equals(uid));
+    public Boolean hasAccess(final String currUserName) {
+        return (manager.getAppUser().getUsername().equals(currUserName)
+                || employee.getAppUser().getUsername().equals(currUserName));
     }
 }
