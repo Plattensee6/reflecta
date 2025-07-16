@@ -40,7 +40,7 @@ public class User {
     private String email;
 
     @OneToOne
-    @JoinColumn(name = "app_user")
+    @JoinColumn(name = "app_user_id")
     private AppUser appUser;
 
     public void update(final User user) {

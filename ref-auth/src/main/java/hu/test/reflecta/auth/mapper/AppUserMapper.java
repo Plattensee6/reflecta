@@ -13,8 +13,7 @@ import java.util.Set;
 public class AppUserMapper {
     public AppUserResponse toDto(final AppUser appUser) {
         return AppUserResponse.builder()
-                .id(appUser.getUserId())
-                .userId(appUser.getUserId())
+                .id(appUser.getId())
                 .username(appUser.getUsername())
                 .build();
     }
@@ -24,7 +23,6 @@ public class AppUserMapper {
                 appUserRequest.getRoles()
                 : new HashSet<>(Set.of(Role.ROLE_USER, Role.ROLE_READ));
         return AppUser.builder()
-                .userId(appUserRequest.getUserId())
                 .roles(roles)
                 .username(appUserRequest.getUsername())
                 .passwordHash(appUserRequest.getPasswordHash())

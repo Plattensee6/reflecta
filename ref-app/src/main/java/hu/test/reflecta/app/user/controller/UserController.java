@@ -41,18 +41,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getById(id));
     }
 
-    @Operation(summary = "Create a new user")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "User created successfully"),
-            @ApiResponse(responseCode = "400", description = "Validation error")
-    })
-    @PreAuthorize("hasAuthority('WRITE')")
-    @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody @Valid UserRequest request) {
-        UserResponse created = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
-    }
-
     @Operation(summary = "Get all users")
     @ApiResponse(responseCode = "200", description = "List of users")
     @PreAuthorize("hasAuthority('READ') and hasAuthority('ADMIN')")

@@ -61,9 +61,9 @@ public class AppUser implements UserDetails, Accessible {
     private Set<Role> roles = new HashSet<>();
 
     // Business user ID, one-to-one
-    @Column(name = "user_id", nullable = false)
+ /*   @Column(name = "user_id", nullable = false)
     private Long userId;
-
+*/
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
@@ -102,8 +102,8 @@ public class AppUser implements UserDetails, Accessible {
     }
 
     @Override
-    public Boolean hasAccess(Long currUserId) {
-        return this.userId.equals(currUserId);
+    public Boolean hasAccess(String currUserName) {
+        return this.username.equals(currUserName);
     }
 
     public void addRole(final Role role) {

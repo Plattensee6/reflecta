@@ -40,9 +40,6 @@ databaseChangeLog:
                     name: password_hash
                     value: "$2a$10$ha7paX0oUgp8/j0ES6X8NeL0a0E93K3wVQi8XXb4q746/26QTNV4u"
                 - column:
-                    name: user_id
-                    valueNumeric: 1
-                - column:
                     name: enabled
                     valueBoolean: true
                 - column:

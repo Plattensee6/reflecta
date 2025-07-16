@@ -1,5 +1,6 @@
 package hu.test.reflecta.service;
 
+import hu.test.reflecta.auth.repository.AppUserRepository;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
@@ -11,6 +12,7 @@ import hu.test.reflecta.user.service.UserServiceImpl;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 
 import java.util.Optional;
 
@@ -19,14 +21,18 @@ import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
     private UserRepository userRepository;
+    @Mock
     private UserMapper userMapper;
+    @Mock
     private UserService userService;
+    @Mock
+    private AppUserRepository appUserRepository;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
         userMapper = mock(UserMapper.class);
-        userService = new UserServiceImpl(userRepository, userMapper, new UserErrorMessage());
+        userService = new UserServiceImpl(userRepository, userMapper, new UserErrorMessage(), appUserRepository);
     }
 
     @Test
@@ -134,7 +140,6 @@ public class UserServiceTest {
     void update_shouldThrow_whenUserNotFound() {
         when(userRepository.findById(42L)).thenReturn(Optional.empty());
         var request = UserRequest.builder()
-                .id(1L)
                 .build();
         assertThatThrownBy(() -> userService.updateUser(42L, request))
                 .isInstanceOf(EntityNotFoundException.class);

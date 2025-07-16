@@ -1,6 +1,9 @@
 package hu.test.reflecta.user.service;
 
 import hu.test.reflecta.auth.check.RequireAccess;
+import hu.test.reflecta.auth.model.AppUser;
+import hu.test.reflecta.auth.repository.AppUserRepository;
+import hu.test.reflecta.auth.service.AppUserService;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
@@ -24,12 +27,15 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper mapper;
     private final UserErrorMessage userErrorMessage;
+    private final AppUserRepository appUserRepository;
 
     @Transactional(readOnly = true)
     @RequireAccess(allowAdmin = true)
     @Override
     public UserResponse createUser(final UserRequest request) {
         final User user = mapper.toEntity(request);
+        final AppUser appUser = appUserRepository.getReferenceById(request.getAppUserId());
+        user.setAppUser(appUser);
         User saved = userRepository.save(user);
         return mapper.toResponse(saved);
     }

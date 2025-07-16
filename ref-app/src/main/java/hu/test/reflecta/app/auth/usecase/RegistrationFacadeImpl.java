@@ -2,6 +2,7 @@ package hu.test.reflecta.app.auth.usecase;
 
 import hu.test.reflecta.app.exception.AppErrorMessage;
 import hu.test.reflecta.auth.dto.AppUserRequest;
+import hu.test.reflecta.auth.dto.AppUserResponse;
 import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.service.AppUserService;
 import hu.test.reflecta.user.data.dto.UserRequest;
@@ -41,21 +42,21 @@ public class RegistrationFacadeImpl implements RegistrationFacade {
     public void register(final RegistrationRequest request) {
         final String password = request.password();
         final String passwordConf = request.passwordConfirm();
-        if (StringUtils.equals(password, passwordConf)) {
+        if (!StringUtils.equals(password, passwordConf)) {
             throw new IllegalArgumentException(appErrorMessage.getPwdNoMatch());
         }
+        final AppUserRequest appUserRequest = AppUserRequest.builder()
+                .passwordHash(request.password())
+                .username(request.username())
+                .build();
+        final AppUserResponse appUserResponse = appUserService.create(appUserRequest);
         final UserRequest userRequest = UserRequest.builder()
                 .email(request.email())
                 .fullName(request.fullName())
                 .dateOfBirth(request.dateOfBirth())
                 .position(request.position())
+                .appUserId(appUserResponse.getId())
                 .build();
-        final UserResponse userResponse = userService.createUser(userRequest);
-        final AppUserRequest appUserRequest = AppUserRequest.builder()
-                .userId(userResponse.getId())
-                .passwordHash(request.password())
-                .username(request.username())
-                .build();
-        appUserService.create(appUserRequest);
+        userService.createUser(userRequest);
     }
 }

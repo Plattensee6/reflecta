@@ -8,6 +8,7 @@ import hu.test.reflecta.auth.model.Role;
 import hu.test.reflecta.auth.repository.AppUserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -49,11 +50,11 @@ public class AuthServiceImpl implements AuthService {
     @Transactional(readOnly = true)
     @Override
     public Long getCurrentUserId() {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof JwtUserDetails user) {
-            return user.getId();
-        }
-        return null;
+       /* final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null && auth.getPrincipal() instanceof UserDetails user) {
+            return auth.getName();
+        }*/
+        throw new NotImplementedException();
     }
 
     @Transactional(readOnly = true)
@@ -82,7 +83,7 @@ public class AuthServiceImpl implements AuthService {
         final String token = jwtService.generateToken(appUser);
         return LoginResponse.builder()
                 .token(token)
-                .businessUserId(appUser.getUserId())
+                .appUserId(appUser.getId())
                 .expiresIn(jwtService.getExpirationTime())
                 .build();
     }

@@ -39,6 +39,9 @@ databaseChangeLog:
                   type: SMALLINT
                   constraints:
                     nullable: false
+              - column:
+                 name: app_user_id
+                 type: BIGINT
 
         - createIndex:
             tableName: t_user
@@ -89,20 +92,18 @@ databaseChangeLog:
                   type: BOOLEAN
                   constraints:
                     nullable: false
-              - column:
-                  name: user_id
-                  type: BIGINT
+
               - column:
                   name: created_at
                   type: TIMESTAMP
                   constraints:
                     nullable: false
         - addForeignKeyConstraint:
-            baseTableName: t_app_user
-            baseColumnNames: user_id
-            referencedTableName: t_user
+            baseTableName: t_user
+            baseColumnNames: app_user_id
+            referencedTableName: t_app_user
             referencedColumnNames: id
-            constraintName: fk_appuser_user
+            constraintName: fk_user_appuser
         - createIndex:
             tableName: t_app_user
             indexName: idx_app_user_name

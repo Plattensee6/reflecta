@@ -44,7 +44,7 @@ public class AuthControllerTest {
     void login_ShouldReturn200_WhenLoginSucceeds() throws Exception {
         // Arrange
         LoginRequest request = new LoginRequest("john", "password");
-        LoginResponse response = new LoginResponse("fake-jwt-token", 1001L, 1111);
+        LoginResponse response = new LoginResponse("fake-jwt-token", 1001L, 1111L);
 
         Mockito.when(authService.login(any(LoginRequest.class)))
                 .thenReturn(response);

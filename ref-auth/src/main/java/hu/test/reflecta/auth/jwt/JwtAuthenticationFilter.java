@@ -32,7 +32,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-    private final String AUTH_HEADER = "Authorization";
+    private final String AUTH_HEADER = "authorization";
     private final String BEARER = "Bearer ";
     private final AuthErrorMessages authErrorMessages;
 
@@ -72,7 +72,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (username != null && authentication == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                setUpToken(userDetails, request);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
+                );
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
     }

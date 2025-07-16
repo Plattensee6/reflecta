@@ -9,11 +9,11 @@ import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.model.Role;
 import hu.test.reflecta.auth.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +21,12 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserRepository appUserRepository;
     private final AppUserMapper appUserMapper;
     private final AuthService authService;
+    private final PasswordEncoder encoder;
+
+    @Override
+    public AppUserResponse getById(final Long id) {
+        return appUserMapper.toDto(appUserRepository.getReferenceById(id));
+    }
 
     @Transactional(readOnly = true)
     @Override
@@ -29,6 +35,7 @@ public class AppUserServiceImpl implements AppUserService {
                 request,
                 authService.currentUserHasRole(Role.ROLE_ADMIN)
         );
+        appUser.setPasswordHash(encoder.encode(request.getPasswordHash()));
         appUser.setEnabled(Boolean.TRUE);
         appUser.setCreatedAt(LocalDateTime.now());
         appUserRepository.save(appUser);
