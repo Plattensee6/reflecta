@@ -4,6 +4,8 @@ package hu.test.reflecta.user.service;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -24,7 +26,7 @@ public interface UserService {
      *
      * @return a list of {@link UserResponse} DTOs
      */
-    List<UserResponse> getAllUsers();
+    Page<UserResponse> getAllUsers(Pageable pageable);
 
     /**
      * Retrieves a user by their ID.

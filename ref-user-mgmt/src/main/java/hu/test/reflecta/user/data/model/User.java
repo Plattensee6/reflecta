@@ -1,5 +1,6 @@
 package hu.test.reflecta.user.data.model;
 
+import hu.test.reflecta.auth.model.Accessible;
 import hu.test.reflecta.auth.model.AppUser;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -22,7 +24,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User implements Accessible {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -48,5 +50,10 @@ public class User {
         this.setEmail(user.getEmail());
         this.setPosition(user.getPosition());
         this.setDateOfBirth(user.getDateOfBirth());
+    }
+
+    @Override
+    public Boolean hasAccess(String currUserName) {
+        return StringUtils.equals(appUser.getUsername(), currUserName);
     }
 }
