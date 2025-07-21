@@ -6,4 +6,4 @@ errors:
     updateFinMeeting: Cannot update a finalized meeting
     deleteFinMeeting: Cannot delete a finalized meeting
     invalidTimeRange: Meeting start date must be before end date.
-    unauthorized: You are not allowed to modify this meeting.
+    unauthorized: You are not allowed to access this meeting.

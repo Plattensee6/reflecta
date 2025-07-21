@@ -1,14 +1,15 @@
 package hu.test.reflecta.auth.service;
 
-import hu.test.reflecta.auth.check.RequireAccess;
 import hu.test.reflecta.auth.dto.AppUserRequest;
 import hu.test.reflecta.auth.dto.AppUserResponse;
 import hu.test.reflecta.auth.dto.AppUserRolesRequest;
+import hu.test.reflecta.auth.exception.AuthErrorMessages;
 import hu.test.reflecta.auth.mapper.AppUserMapper;
 import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.model.Role;
 import hu.test.reflecta.auth.repository.AppUserRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,9 +23,13 @@ public class AppUserServiceImpl implements AppUserService {
     private final AppUserMapper appUserMapper;
     private final AuthService authService;
     private final PasswordEncoder encoder;
+    private final AuthErrorMessages errorMessages;
 
     @Override
     public AppUserResponse getById(final Long id) {
+        if (!authService.getCurrentUserId().equals(id)) {
+            throw new AccessDeniedException(errorMessages.getAccessDenied());
+        }
         return appUserMapper.toDto(appUserRepository.getReferenceById(id));
     }
 
@@ -42,20 +47,18 @@ public class AppUserServiceImpl implements AppUserService {
         return appUserMapper.toDto(appUser);
     }
 
-    @RequireAccess(allowAdmin = true)
     @Override
     public AppUserResponse addRoles(final AppUserRolesRequest request) {
         final Long appUserId = request.getAppUserId();
-        final AppUser existing = appUserRepository.getReferenceById(appUserId);
+        final AppUser existing = appUserRepository.getReferenceWithAccessById(appUserId);
         existing.addRoles(request.getNewRoles());
         return appUserMapper.toDto(existing);
     }
 
-    @RequireAccess(allowAdmin = true)
     @Override
     public AppUserResponse revokeRoles(final AppUserRolesRequest request) {
         final Long appUserId = request.getAppUserId();
-        final AppUser existing = appUserRepository.getReferenceById(appUserId);
+        final AppUser existing = appUserRepository.getReferenceWithAccessById(appUserId);
         existing.addRoles(request.getNewRoles());
         return appUserMapper.toDto(existing);
     }
