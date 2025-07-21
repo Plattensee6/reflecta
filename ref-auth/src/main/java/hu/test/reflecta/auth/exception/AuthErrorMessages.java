@@ -9,4 +9,5 @@ public class AuthErrorMessages {
     private String userNotAuthenticated;
     private String accessDenied;
     private String jwtAuthFailed;
+    private String accessibleNotImplemented;
 }

@@ -61,10 +61,14 @@ public class MeetingController {
             @Parameter(description = "End date (ISO format)") @RequestParam(required = false)
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end,
             @Parameter(description = "Finalized flag") @RequestParam(required = false) Boolean finalized,
+            @Parameter(description = "Participant employee id") @RequestParam(required = false) Long employeeId,
+            @Parameter(description = "Participant manager id") @RequestParam(required = false) Long managerId,
             Integer page, Integer size
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.DEFAULT_DIRECTION);
-        Page<MeetingResponse> results = meetingService.searchMeetings(authService.getCurrentUserId(), title, start, end, finalized, 1001L, 1002L, pageable);
+        Page<MeetingResponse> results = meetingService.searchMeetings(
+                authService.getCurrentUserId(),
+                title, start, end, finalized, managerId, employeeId, pageable);
         return ResponseEntity.ok(results);
     }
 

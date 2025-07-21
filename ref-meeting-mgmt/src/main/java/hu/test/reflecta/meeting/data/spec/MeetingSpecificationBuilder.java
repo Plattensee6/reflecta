@@ -8,7 +8,48 @@ import java.time.LocalDateTime;
  * Utility class for building {@link Specification} filters for {@link Meeting} entities.
  */
 public class MeetingSpecificationBuilder {
-    private MeetingSpecificationBuilder() {
+    private Long employeeId;
+    private Long managerId;
+    private String title;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    private Boolean finalized;
+    private Long meetingId;
+
+
+    public MeetingSpecificationBuilder withMeetingId(Long id) {
+        this.meetingId = id;
+        return this;
+    }
+
+    public MeetingSpecificationBuilder withEmployee(Long uid) {
+        this.employeeId = uid;
+        return this;
+    }
+
+    public MeetingSpecificationBuilder withManager(Long uid) {
+        this.managerId = uid;
+        return this;
+    }
+
+    public MeetingSpecificationBuilder withTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public MeetingSpecificationBuilder withStartDate(LocalDateTime startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    public MeetingSpecificationBuilder withEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
+        return this;
+    }
+
+    public MeetingSpecificationBuilder withFinalized(Boolean finalized) {
+        this.finalized = finalized;
+        return this;
     }
 
     /**
@@ -21,18 +62,14 @@ public class MeetingSpecificationBuilder {
      * @param finalized         whether the meeting is finalized (can be {@code null})
      * @return a {@link Specification} representing the combined filters
      */
-    public static Specification<Meeting> build(
-            final Long participantUserId,
-            final String title,
-            final LocalDateTime startDate,
-            final LocalDateTime endDate,
-            final Boolean finalized
-    ) {
+    public Specification<Meeting> build() {
         return Specification
-                .where(MeetingSpecification.participant(participantUserId))
+                .where(MeetingSpecification.participant(employeeId))
+                .and(MeetingSpecification.participant(managerId))
                 .and(MeetingSpecification.titleContains(title))
                 .and(MeetingSpecification.startsAfter(startDate))
                 .and(MeetingSpecification.endsBefore(endDate))
-                .and(MeetingSpecification.isFinalized(finalized));
+                .and(MeetingSpecification.isFinalized(finalized))
+                .and(MeetingSpecification.equalsByMeetingId(meetingId));
     }
 }

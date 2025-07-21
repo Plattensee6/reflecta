@@ -3,3 +3,7 @@ error:
     userNotAuthenticated: User not authenticated.
     accessDenied: You are not authorized to access this resource.
     jwtAuthFailed: JWT authentication failed.
+    accessibleNotImplemented: >
+      Access check failed: the method %s in class %s is annotated with @RequireAccess
+      but returned an object that does not implement Accessible.
+      To use @RequireAccess, the return type must implement the Accessible interface.

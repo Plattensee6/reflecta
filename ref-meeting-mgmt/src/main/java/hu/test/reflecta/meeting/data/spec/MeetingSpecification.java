@@ -43,6 +43,13 @@ public class MeetingSpecification {
                 );
     }
 
+    public static Specification<Meeting> equalsByMeetingId(final Long id) {
+        if (id == null) {
+            return null;
+        }
+        return ((root, query, builder) -> builder.equal(root.get("id"), id));
+    }
+
     /**
      * Filter by start date and time (start >= param).
      *
