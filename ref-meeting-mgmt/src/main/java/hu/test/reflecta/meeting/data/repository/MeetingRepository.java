@@ -1,6 +1,5 @@
 package hu.test.reflecta.meeting.data.repository;
 
-import hu.test.reflecta.auth.check.RequireAccess;
 import hu.test.reflecta.meeting.data.model.Meeting;
 import hu.test.reflecta.meeting.data.spec.MeetingSpecification;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, JpaSpec
                   AND m.startDateTime < :endTime
                   AND m.endDateTime > :startTime
             """)
-    @RequireAccess(allowAdmin = true)
     boolean hasOverlappingFinalizedMeetings(
             @Param("id") Long id,
             @Param("startTime") java.time.LocalDateTime startTime,
@@ -36,12 +34,9 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, JpaSpec
             @Param("managerId") Long managerId
     );
 
-    @RequireAccess(allowAdmin = true)
     Optional<Meeting> getReferenceWithAccessById(Long id);
 
-    @RequireAccess(allowAdmin = true)
     void deleteWithAccessById(Long id);
 
-    @RequireAccess
     Page<Meeting> findAllWithAccess(Specification<MeetingSpecification> spec, Pageable pageable);
 }
