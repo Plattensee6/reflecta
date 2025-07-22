@@ -1,6 +1,7 @@
 package hu.test.reflecta.auth.jwt;
 
 import hu.test.reflecta.auth.exception.AuthErrorMessages;
+import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.service.JwtService;
 import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
@@ -14,11 +15,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Filter that processes JWT-based authentication for incoming HTTP requests.
@@ -51,7 +55,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String jwt = authHeader.substring(7);
             final String username = jwtService.extractUsername(jwt);
-            authenticate(username, jwt, request);
+            final Long userId = jwtService.extractUserId(jwt);
+            authenticate(username, userId, jwt, request);
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
             throw new JwtException(authErrorMessages.getJwtAuthFailed(), exception);
@@ -66,19 +71,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * @param request  the HTTP request
      */
     private void authenticate(final String username,
+                              final Long userId,
                               final String jwt,
                               final HttpServletRequest request) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (username != null && authentication == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+        Authentication existingAuth = SecurityContextHolder.getContext().getAuthentication();
+        if (username != null && existingAuth == null) {
+            AppUser userDetails = (AppUser) userDetailsService.loadUserByUsername(username);
             if (jwtService.isTokenValid(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities()
+                        );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }

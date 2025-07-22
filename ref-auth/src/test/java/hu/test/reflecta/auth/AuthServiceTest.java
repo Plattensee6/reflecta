@@ -5,7 +5,6 @@ import hu.test.reflecta.auth.model.Role;
 import hu.test.reflecta.auth.dto.LoginRequest;
 import hu.test.reflecta.auth.dto.LoginResponse;
 import hu.test.reflecta.auth.jwt.JwtTokenProvider;
-import hu.test.reflecta.auth.model.JwtUserDetails;
 import hu.test.reflecta.auth.repository.AppUserRepository;
 import hu.test.reflecta.auth.service.AuthServiceImpl;
 import hu.test.reflecta.auth.service.AuthenticationException;

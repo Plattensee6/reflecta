@@ -105,6 +105,10 @@ public class AppUser implements UserDetails, Accessible {
         return this.username.equals(currUserName);
     }
 
+    public boolean hasRole(final Role role) {
+        return roles.contains(role);
+    }
+
     public void addRole(final Role role) {
         this.roles.add(role);
     }

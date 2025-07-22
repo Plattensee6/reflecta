@@ -1,6 +1,7 @@
 package hu.test.reflecta.auth.service;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -34,6 +35,22 @@ public class JwtService {
      */
     public String extractUsername(final String token) {
         return extractClaim(token, Claims::getSubject);
+    }
+
+    /**
+     * Extracts the userId (subject) from the JWT token.
+     *
+     * @param token the JWT token
+     * @return the username contained in the token
+     */
+    public Long extractUserId(String token) {
+        return extractClaim(token, claims -> {
+            Object userIdClaim = claims.get("userId");
+            if (userIdClaim instanceof Number number) {
+                return number.longValue();
+            }
+            throw new JwtException("Invalid or missing userId claim");
+        });
     }
 
     /**
