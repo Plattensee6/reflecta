@@ -50,7 +50,7 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public AppUserResponse addRoles(final AppUserRolesRequest request) {
         final Long appUserId = request.getAppUserId();
-        final AppUser existing = appUserRepository.getReferenceWithAccessById(appUserId);
+        final AppUser existing = appUserRepository.getReferenceById(appUserId);
         existing.addRoles(request.getNewRoles());
         return appUserMapper.toDto(existing);
     }
@@ -58,7 +58,7 @@ public class AppUserServiceImpl implements AppUserService {
     @Override
     public AppUserResponse revokeRoles(final AppUserRolesRequest request) {
         final Long appUserId = request.getAppUserId();
-        final AppUser existing = appUserRepository.getReferenceWithAccessById(appUserId);
+        final AppUser existing = appUserRepository.getReferenceById(appUserId);
         existing.addRoles(request.getNewRoles());
         return appUserMapper.toDto(existing);
     }
