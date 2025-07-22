@@ -1,17 +1,11 @@
 package hu.test.reflecta.meeting.data.repository;
 
 import hu.test.reflecta.meeting.data.model.Meeting;
-import hu.test.reflecta.meeting.data.spec.MeetingSpecification;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 @Repository
 public interface MeetingRepository extends JpaRepository<Meeting, Long>, JpaSpecificationExecutor<Meeting> {
@@ -33,10 +27,4 @@ public interface MeetingRepository extends JpaRepository<Meeting, Long>, JpaSpec
             @Param("employeeId") Long employeeId,
             @Param("managerId") Long managerId
     );
-
-    Optional<Meeting> getReferenceWithAccessById(Long id);
-
-    void deleteWithAccessById(Long id);
-
-    Page<Meeting> findAllWithAccess(Specification<MeetingSpecification> spec, Pageable pageable);
 }
