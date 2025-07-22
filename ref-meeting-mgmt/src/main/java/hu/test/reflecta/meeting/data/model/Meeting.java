@@ -44,6 +44,9 @@ public class Meeting implements Accessible {
     @Column(nullable = false)
     private Boolean isFinalized = false;
 
+    @Version
+    private Long version;
+
     public void finalizeMeeting() {
         this.isFinalized = true;
     }

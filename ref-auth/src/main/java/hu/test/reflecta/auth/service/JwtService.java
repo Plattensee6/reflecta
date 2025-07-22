@@ -6,6 +6,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import java.util.function.Function;
 /**
  * Service class responsible for JWT token generation, validation, and extraction of claims.
  */
+@Slf4j
 @Service
 public class JwtService {
     @Value("${security.jwt.secret-key}")
@@ -34,23 +36,39 @@ public class JwtService {
      * @return the username contained in the token
      */
     public String extractUsername(final String token) {
-        return extractClaim(token, Claims::getSubject);
+        log.debug("Extracting username from JWT token");
+        try {
+            String username = extractClaim(token, Claims::getSubject);
+            log.debug("Extracted username: {}", username);
+            return username;
+        } catch (Exception e) {
+            log.error("Failed to extract username from JWT token", e);
+            throw e;
+        }
     }
 
     /**
      * Extracts the userId (subject) from the JWT token.
      *
      * @param token the JWT token
-     * @return the username contained in the token
+     * @return the userId contained in the token
      */
     public Long extractUserId(String token) {
-        return extractClaim(token, claims -> {
-            Object userIdClaim = claims.get("userId");
-            if (userIdClaim instanceof Number number) {
-                return number.longValue();
-            }
-            throw new JwtException("Invalid or missing userId claim");
-        });
+        log.debug("Extracting userId from JWT token");
+        try {
+            Long userId = extractClaim(token, claims -> {
+                Object userIdClaim = claims.get("userId");
+                if (userIdClaim instanceof Number number) {
+                    return number.longValue();
+                }
+                throw new JwtException("Invalid or missing userId claim");
+            });
+            log.debug("Extracted userId: {}", userId);
+            return userId;
+        } catch (Exception e) {
+            log.error("Failed to extract userId from JWT token", e);
+            throw e;
+        }
     }
 
     /**

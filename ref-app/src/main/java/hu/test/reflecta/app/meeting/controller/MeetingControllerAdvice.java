@@ -5,7 +5,9 @@ import hu.test.reflecta.meeting.exception.MeetingAlreadyFinalizedException;
 import hu.test.reflecta.meeting.exception.MeetingConflictException;
 import hu.test.reflecta.meeting.exception.ParticipantAccessException;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -62,6 +64,12 @@ public class MeetingControllerAdvice {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleOther(final Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("INTERNAL_ERROR", "Unexpected error: " + ex.getLocalizedMessage()));
+                .body(new ErrorResponse("INTERNAL_ERROR", "Unexpected error"));
+    }
+
+    @ExceptionHandler({OptimisticLockException.class, OptimisticLockingFailureException.class})
+    public ResponseEntity<ErrorResponse> handleOptimisticLocking(Exception ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse("CONCURRENT_MODIFICATION", "The meeting was modified by another user. Please reload and try again."));
     }
 }

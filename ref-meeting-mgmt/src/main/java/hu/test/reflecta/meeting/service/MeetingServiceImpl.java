@@ -12,6 +12,7 @@ import hu.test.reflecta.meeting.data.spec.MeetingSpecificationBuilder;
 import hu.test.reflecta.user.data.model.User;
 import hu.test.reflecta.user.data.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 /**
  * Service implementation for managing {@link Meeting} operations.
  */
+@Slf4j
 @Service
 public class MeetingServiceImpl implements MeetingService {
 
@@ -52,8 +54,15 @@ public class MeetingServiceImpl implements MeetingService {
     @Override
     @Transactional(readOnly = true)
     public MeetingResponse getById(final Long id) {
-        final var entity = meetingRepository.getById(id, true);
-        return MeetingMapper.toDto(entity);
+        log.debug("Fetching meeting by id={}", id);
+        try {
+            final var entity = meetingRepository.getById(id, true);
+            log.debug("Meeting found: id={}", id);
+            return MeetingMapper.toDto(entity);
+        } catch (Exception e) {
+            log.error("Failed to fetch meeting by id={}", id, e);
+            throw e;
+        }
     }
 
     /**
@@ -65,16 +74,24 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws EntityNotFoundException if the specified employee or manager does not exist
      */
     @Override
+    @Transactional
     public MeetingResponse create(final MeetingRequest request, final Long currAppUserId) {
-        final var meeting = MeetingMapper.toEntity(request);
-        final User employee = userRepository.findById(request.getEmployeeId())
-                .orElseThrow(() -> new EntityNotFoundException(errorMessages.getMeetingNotFound())); // TODO: service legyen használva
-        final User manager = userRepository.findById(request.getManagerId())
-                .orElseThrow(() -> new EntityNotFoundException(errorMessages.getMeetingNotFound()));
-        meeting.setManager(manager);
-        meeting.setEmployee(employee);
-        final var saved = meetingRepository.save(meeting);
-        return MeetingMapper.toDto(saved);
+        log.debug("Creating meeting for employeeId={}, managerId={}", request.getEmployeeId(), request.getManagerId());
+        try {
+            final var meeting = MeetingMapper.toEntity(request);
+            final User employee = userRepository.findById(request.getEmployeeId())
+                    .orElseThrow(() -> new EntityNotFoundException(errorMessages.getMeetingNotFound())); // TODO: service legyen használva
+            final User manager = userRepository.findById(request.getManagerId())
+                    .orElseThrow(() -> new EntityNotFoundException(errorMessages.getMeetingNotFound()));
+            meeting.setManager(manager);
+            meeting.setEmployee(employee);
+            final var saved = meetingRepository.save(meeting);
+            log.debug("Meeting created with id={}", saved.getId());
+            return MeetingMapper.toDto(saved);
+        } catch (Exception e) {
+            log.error("Failed to create meeting for employeeId={}, managerId={}", request.getEmployeeId(), request.getManagerId(), e);
+            throw e;
+        }
     }
 
     /**
@@ -87,14 +104,23 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws IllegalStateException   if the meeting is already finalized
      */
     @Override
+    @Transactional
     public MeetingResponse update(final Long id, final MeetingRequest request) {
-        final var entity = meetingRepository.getById(id, true);
-        if (entity.getIsFinalized()) {
-            throw new IllegalStateException(errorMessages.getUpdateFinalized());
+        log.debug("Updating meeting id={}", id);
+        try {
+            final var entity = meetingRepository.getById(id, true);
+            if (entity.getIsFinalized()) {
+                log.error("Attempted to update finalized meeting id={}", id);
+                throw new IllegalStateException(errorMessages.getUpdateFinalized());
+            }
+            entity.update(request);
+            final var updated = meetingRepository.save(entity);
+            log.debug("Meeting updated: id={}", id);
+            return MeetingMapper.toDto(updated);
+        } catch (Exception e) {
+            log.error("Failed to update meeting id={}", id, e);
+            throw e;
         }
-        entity.update(request);
-        final var updated = meetingRepository.save(entity);
-        return MeetingMapper.toDto(updated);
     }
 
     /**
@@ -105,12 +131,21 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws IllegalStateException   if the meeting is already finalized
      */
     @Override
+    @Transactional
     public void delete(final Long id) {
-        final var meeting = meetingRepository.getById(id, true);
-        if (meeting.getIsFinalized()) {
-            throw new IllegalStateException(errorMessages.getDeleteFinalized());
+        log.debug("Deleting meeting id={}", id);
+        try {
+            final var meeting = meetingRepository.getById(id, true);
+            if (meeting.getIsFinalized()) {
+                log.error("Attempted to delete finalized meeting id={}", id);
+                throw new IllegalStateException(errorMessages.getDeleteFinalized());
+            }
+            meetingRepository.delete(meeting, true);
+            log.debug("Meeting deleted: id={}", id);
+        } catch (Exception e) {
+            log.error("Failed to delete meeting id={}", id, e);
+            throw e;
         }
-        meetingRepository.delete(meeting, true);
     }
 
     /**
@@ -121,29 +156,40 @@ public class MeetingServiceImpl implements MeetingService {
      * @throws IllegalStateException   if the meeting is already finalized or overlaps with another finalized meeting
      */
     @Override
+    @Transactional
     public void finalizeMeeting(final Long id) {
-        final var meeting = meetingRepository.getById(id, true);
-        if (meeting.getIsFinalized()) {
-            throw new IllegalStateException(errorMessages.getFinalizedAlreadyExists());
-        }
-        final User employee = meeting.getEmployee(), manager = meeting.getManager();
-        if (employee == null || manager == null) {
-            throw new EntityNotFoundException(errorMessages.getUserNotFound());
-        }
-        final Specification<Meeting> specification = new MeetingSpecificationBuilder()
-                .withMeetingId(meeting.getId())
-                .withStartDate(meeting.getStartDateTime())
-                .withEndDate(meeting.getEndDateTime())
-                .withManager(meeting.getManager().getId())
-                .withEmployee(meeting.getEmployee().getId())
-                .build();
-        final boolean hasOverlap = meetingRepository.hasOverlappingFinalizedMeetings(specification);
+        log.debug("Finalizing meeting id={}", id);
+        try {
+            final var meeting = meetingRepository.getById(id, true);
+            if (meeting.getIsFinalized()) {
+                log.error("Attempted to finalize already finalized meeting id={}", id);
+                throw new IllegalStateException(errorMessages.getFinalizedAlreadyExists());
+            }
+            final User employee = meeting.getEmployee(), manager = meeting.getManager();
+            if (employee == null || manager == null) {
+                log.error("Meeting id={} has missing participants", id);
+                throw new EntityNotFoundException(errorMessages.getUserNotFound());
+            }
+            final Specification<Meeting> specification = new MeetingSpecificationBuilder()
+                    .withMeetingId(meeting.getId())
+                    .withStartDate(meeting.getStartDateTime())
+                    .withEndDate(meeting.getEndDateTime())
+                    .withManager(meeting.getManager().getId())
+                    .withEmployee(meeting.getEmployee().getId())
+                    .build();
+            final boolean hasOverlap = meetingRepository.hasOverlappingFinalizedMeetings(specification);
 
-        if (hasOverlap) {
-            throw new IllegalStateException(errorMessages.getFinalizedAlreadyExists());
+            if (hasOverlap) {
+                log.error("Finalization failed: overlapping finalized meeting for id={}", id);
+                throw new IllegalStateException(errorMessages.getFinalizedAlreadyExists());
+            }
+            meeting.finalizeMeeting();
+            meetingRepository.save(meeting);
+            log.debug("Meeting finalized: id={}", id);
+        } catch (Exception e) {
+            log.error("Failed to finalize meeting id={}", id, e);
+            throw e;
         }
-        meeting.finalizeMeeting();
-        meetingRepository.save(meeting);
     }
 
     /**
@@ -170,19 +216,27 @@ public class MeetingServiceImpl implements MeetingService {
                                                 final Long managerId,
                                                 final Long employeeId,
                                                 final Pageable pageable) {
-
-        final var spec = new MeetingSpecificationBuilder()
-                .withEmployee(employeeId)
-                .withManager(managerId)
-                .withTitle(title)
-                .withStartDate(start)
-                .withEndDate(end)
-                .withFinalized(finalized)
-                .build();
-        final Page<Meeting> page = meetingRepository.getAll(pageable, spec, true);
-        if (CollectionUtils.isEmpty(page.toList())) {
-            throw new EntityNotFoundException(errorMessages.getMeetingNotFound());
+        log.debug("Searching meetings for userId={}, title={}, start={}, end={}, finalized={}, managerId={}, employeeId={}, pageable={}",
+                currentUserId, title, start, end, finalized, managerId, employeeId, pageable);
+        try {
+            final var spec = new MeetingSpecificationBuilder()
+                    .withEmployee(employeeId)
+                    .withManager(managerId)
+                    .withTitle(title)
+                    .withStartDate(start)
+                    .withEndDate(end)
+                    .withFinalized(finalized)
+                    .build();
+            final Page<Meeting> page = meetingRepository.getAll(pageable, spec, true);
+            if (CollectionUtils.isEmpty(page.toList())) {
+                log.debug("No meetings found for search criteria");
+                throw new EntityNotFoundException(errorMessages.getMeetingNotFound());
+            }
+            log.debug("Found {} meetings for search criteria", page.getTotalElements());
+            return page.map(MeetingMapper::toDto);
+        } catch (Exception e) {
+            log.error("Failed to search meetings", e);
+            throw e;
         }
-        return page.map(MeetingMapper::toDto);
     }
 }
