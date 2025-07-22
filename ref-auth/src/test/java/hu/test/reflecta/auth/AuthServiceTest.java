@@ -1,5 +1,6 @@
 package hu.test.reflecta.auth;
 
+import hu.test.reflecta.auth.exception.AuthErrorMessages;
 import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.model.Role;
 import hu.test.reflecta.auth.dto.LoginRequest;
@@ -20,6 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,11 +45,15 @@ class AuthServiceTest {
     private JwtService jwtService;
     @Mock
     private AuthenticationConfiguration authenticationConfiguration;
+    @Mock
+    private AuthErrorMessages authErrorMessages;
+
 
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
-        authService = new AuthServiceImpl(userRepository, authenticationConfiguration, jwtService);
+        authService = new AuthServiceImpl(userRepository, authenticationConfiguration,
+                jwtService, authErrorMessages);
     }
 
     @Test
@@ -115,7 +121,7 @@ class AuthServiceTest {
     @Test
     void getCurrentUsername_ShouldReturnUsername() {
         // Arrange
-        JwtUserDetails principal = new JwtUserDetails(1L, "john", Set.of(Role.ROLE_USER));
+        AppUser principal = new AppUser(1L, "john","", true,  LocalDateTime.now(), Set.of(Role.ROLE_USER));
         var auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -129,7 +135,7 @@ class AuthServiceTest {
     @Test
     void getCurrentUserId_ShouldReturnId() {
         // Arrange
-        JwtUserDetails principal = new JwtUserDetails(42L, "john", Set.of(Role.ROLE_USER));
+        AppUser principal = new AppUser(42L, "john","", true,  LocalDateTime.now(), Set.of(Role.ROLE_USER));
         var auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
@@ -143,7 +149,7 @@ class AuthServiceTest {
     @Test
     void getCurrentUserRoles_ShouldReturnRoles() {
         // Arrange
-        JwtUserDetails principal = new JwtUserDetails(1L, "john", Set.of(Role.ROLE_USER));
+        AppUser principal = new AppUser(1L, "john","", true,  LocalDateTime.now(), Set.of(Role.ROLE_USER));
         var auth = new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
