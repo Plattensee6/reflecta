@@ -4,6 +4,7 @@ import hu.test.reflecta.auth.mapper.AppUserMapper;
 import hu.test.reflecta.auth.repository.AppUserRepository;
 import hu.test.reflecta.auth.repository.SecuredRepositoryProxy;
 import hu.test.reflecta.auth.service.AppUserService;
+import hu.test.reflecta.auth.service.AuthService;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
@@ -27,7 +28,7 @@ public class UserServiceTest {
     @Mock
     private UserMapper userMapper;
     @Mock
-    private AppUserMapper appUserMapper;
+    private AuthService authService;
     @Mock
     private UserService userService;
     @Mock
@@ -39,7 +40,7 @@ public class UserServiceTest {
     void setUp() {
         userRepository = mock(UserRepository.class);
         userMapper = mock(UserMapper.class);
-        userService = new UserServiceImpl(userMapper, new UserErrorMessage(), appUserRepository,securedRepositoryProxy);
+        userService = new UserServiceImpl(userMapper, new UserErrorMessage(), appUserRepository,userRepository, authService);
     }
 
     @Test

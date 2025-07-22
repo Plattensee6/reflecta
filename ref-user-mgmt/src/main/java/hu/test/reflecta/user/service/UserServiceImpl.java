@@ -3,10 +3,12 @@ package hu.test.reflecta.user.service;
 import hu.test.reflecta.auth.model.AppUser;
 import hu.test.reflecta.auth.repository.AppUserRepository;
 import hu.test.reflecta.auth.repository.SecuredRepositoryProxy;
+import hu.test.reflecta.auth.service.AuthService;
 import hu.test.reflecta.user.data.dto.UserRequest;
 import hu.test.reflecta.user.data.dto.UserResponse;
 import hu.test.reflecta.user.data.mapper.UserMapper;
 import hu.test.reflecta.user.data.model.User;
+import hu.test.reflecta.user.data.repository.UserRepository;
 import hu.test.reflecta.user.data.spec.UserSpecificationBuilder;
 import hu.test.reflecta.user.exception.UserErrorMessage;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,11 +32,12 @@ public class UserServiceImpl implements UserService {
     public UserServiceImpl(final UserMapper mapper,
                            final UserErrorMessage userErrorMessage,
                            final AppUserRepository appUserRepository,
-                           final SecuredRepositoryProxy<User, Long> userRepository) {
+                           final UserRepository userRepository,
+                           final AuthService authService) {
         this.mapper = mapper;
         this.errorMessages = userErrorMessage;
         this.appUserRepository = appUserRepository;
-        this.userRepository = userRepository;
+        this.userRepository = new SecuredRepositoryProxy<>(userRepository, userRepository, authService ,errorMessages);
     }
 
     @Transactional(readOnly = true)

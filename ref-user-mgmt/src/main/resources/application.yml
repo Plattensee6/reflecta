@@ -1,3 +1,4 @@
 error:
   user:
     userNotFound: User not found with ID
+    unauthorized: Not authorized to access user with ID
